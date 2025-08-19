@@ -44,15 +44,8 @@ export default function RoomPage() {
   const [hasVoted, setHasVoted] = useState(false);
   const [error, setError] = useState('');
 
-  // Debug: Log para verificar valores
-  console.log('Debug - room:', room);
-  console.log('Debug - playerId:', playerId);
-  console.log('Debug - room?.ownerId:', room?.ownerId);
-  console.log('Debug - isOwner:', isOwner);
-  
   // Verificação direta de dono da sala
   const isRoomOwner = room?.ownerId === playerId;
-  console.log('Debug - isRoomOwner (verificação direta):', isRoomOwner);
 
   useEffect(() => {
     if (!roomId || !playerId || !playerName) {
@@ -69,8 +62,6 @@ export default function RoomPage() {
 
          // Eventos do WebSocket
      newSocket.on('connect', () => {
-       console.log('Conectado ao servidor');
-       
        // Atualizar socketId do jogador no backend
        if (playerId) {
          fetch(`/api/rooms/${roomId}/players/${playerId}/socket`, {
@@ -91,13 +82,11 @@ export default function RoomPage() {
 
          newSocket.on('joinedRoom', (data) => {
        if (data.success) {
-         console.log('Entrou na sala com sucesso');
          // Atualizar dados da sala e jogadores
          if (data.room) {
            setRoom(data.room);
            setPlayers(data.room.players || []);
            const ownerCheck = data.room.ownerId === playerId;
-           console.log('Debug - Setting isOwner:', ownerCheck, 'ownerId:', data.room.ownerId, 'playerId:', playerId);
            setIsOwner(ownerCheck);
          }
        } else {
@@ -124,8 +113,7 @@ export default function RoomPage() {
       }
     });
 
-         newSocket.on('votingStarted', (data) => {
-       console.log('Votação iniciada:', data);
+       newSocket.on('votingStarted', (data) => {
        if (data.room) {
          setRoom(data.room);
          setPlayers(data.room.players || []);
@@ -156,16 +144,13 @@ export default function RoomPage() {
 
   const handleStartVoting = () => {
     if (socket && isRoomOwner) {
-      console.log('Iniciando votação...');
       socket.emit('startVoting', { roomId, ownerId: playerId });
     } else {
-      console.log('Não pode iniciar votação:', { socket: !!socket, isRoomOwner, playerId, roomOwnerId: room?.ownerId });
     }
   };
 
   const handleVote = (voteValue: number) => {
     if (socket && room?.status === 'voting') {
-      console.log('Votando:', voteValue);
       socket.emit('submitVote', {
         roomId,
         playerId,
@@ -173,25 +158,20 @@ export default function RoomPage() {
       });
       setHasVoted(true);
     } else {
-      console.log('Não pode votar:', { socket: !!socket, roomStatus: room?.status });
     }
   };
 
   const handleRevealVotes = () => {
     if (socket && isRoomOwner) {
-      console.log('Revelando votos...');
       socket.emit('revealVotes', { roomId, ownerId: playerId });
     } else {
-      console.log('Não pode revelar votos:', { socket: !!socket, isRoomOwner, playerId, roomOwnerId: room?.ownerId });
     }
   };
 
   const handleResetVoting = () => {
     if (socket && isRoomOwner) {
-      console.log('Reiniciando votação...');
       socket.emit('resetVoting', { roomId, ownerId: playerId });
     } else {
-      console.log('Não pode reiniciar votação:', { socket: !!socket, isRoomOwner, playerId, roomOwnerId: room?.ownerId });
     }
   };
 
@@ -274,16 +254,6 @@ export default function RoomPage() {
               </button>
             )}
             
-            {/* Botão forçado para teste */}
-            {room?.status === 'waiting' && (
-              <button
-                type="button"
-                onClick={handleStartVoting}
-                className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded"
-              >
-                🧪 Forçar Iniciar (Teste)
-              </button>
-            )}
             {isRoomOwner && room.status === 'voting' && (
               <button
                 type="button"
@@ -308,24 +278,6 @@ export default function RoomPage() {
               className="btn-danger"
             >
               🚪 Sair
-            </button>
-            
-            {/* Botão de debug para verificar se é dono */}
-            <button
-              type="button"
-              onClick={() => {
-                console.log('Debug Info:', {
-                  room,
-                  playerId,
-                  isOwner,
-                  isRoomOwner,
-                  roomOwnerId: room?.ownerId,
-                  socketConnected: !!socket
-                });
-              }}
-              className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm"
-            >
-              🐛 Debug
             </button>
           </div>
         </div>
