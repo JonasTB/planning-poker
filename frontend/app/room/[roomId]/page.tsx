@@ -44,7 +44,6 @@ export default function RoomPage() {
   const [hasVoted, setHasVoted] = useState(false);
   const [error, setError] = useState('');
 
-  // Verificação direta de dono da sala
   const isRoomOwner = room?.ownerId === playerId;
 
   useEffect(() => {
@@ -53,16 +52,12 @@ export default function RoomPage() {
       return;
     }
 
-    // Conectar ao WebSocket
     const newSocket = io('http://localhost:3001');
     setSocket(newSocket);
 
-    // Carregar informações da sala
     loadRoomInfo();
 
-         // Eventos do WebSocket
      newSocket.on('connect', () => {
-       // Atualizar socketId do jogador no backend
        if (playerId) {
          fetch(`/api/rooms/${roomId}/players/${playerId}/socket`, {
            method: 'POST',
@@ -71,7 +66,6 @@ export default function RoomPage() {
          }).catch(console.error);
        }
        
-       // Só emitir joinRoom se não estivermos já na sala
        if (!room) {
          newSocket.emit('joinRoom', {
            roomId,
@@ -82,7 +76,6 @@ export default function RoomPage() {
 
          newSocket.on('joinedRoom', (data) => {
        if (data.success) {
-         // Atualizar dados da sala e jogadores
          if (data.room) {
            setRoom(data.room);
            setPlayers(data.room.players || []);
@@ -95,7 +88,6 @@ export default function RoomPage() {
      });
 
      newSocket.on('playerJoined', (data) => {
-       // Atualizar jogadores e dados da sala
        if (data.room) {
          setRoom(data.room);
          setPlayers(data.room.players || []);
@@ -103,12 +95,10 @@ export default function RoomPage() {
      });
 
     newSocket.on('playerLeft', (data) => {
-      // Atualizar jogadores e dados da sala
       if (data.room) {
         setRoom(data.room);
         setPlayers(data.room.players || []);
       } else {
-        // Fallback: remover apenas o jogador
         setPlayers(prev => prev.filter(p => p.id !== data.playerId));
       }
     });
@@ -179,7 +169,6 @@ export default function RoomPage() {
     if (socket) {
       socket.emit('leaveRoom', { roomId, playerId });
     }
-    // Sempre redirecionar, mesmo se não houver socket
     window.location.href = '/';
   };
 
@@ -239,7 +228,6 @@ export default function RoomPage() {
             </p>
           </div>
           <div className="flex gap-3">
-            {/* Debug: Mostrar informações na tela */}
             <div className="text-xs text-gray-500 mr-4">
               Owner: {room?.ownerId} | Player: {playerId} | IsOwner: {String(isRoomOwner)} | Status: {room?.status}
             </div>
@@ -284,7 +272,6 @@ export default function RoomPage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Mesa de Votação */}
         <div className="lg:col-span-2">
           <VotingTable
             room={room}
@@ -296,13 +283,11 @@ export default function RoomPage() {
           />
         </div>
 
-        {/* Lista de Jogadores */}
         <div>
           <PlayerList players={players} currentPlayerId={playerId} />
         </div>
       </div>
 
-      {/* Cartas de Votação */}
       {room.status === 'voting' && (
         <div className="mt-8">
           <VoteCards
@@ -312,7 +297,7 @@ export default function RoomPage() {
         </div>
       )}
 
-      {/* Resultados da Votação */}
+
       {room.status === 'revealed' && votes.length > 0 && (
         <div className="mt-8">
           <VoteResults votes={votes} />

@@ -62,13 +62,11 @@ export class RoomService {
       throw new BadRequestException('Sala está cheia');
     }
 
-    // Verificar se o jogador já existe na sala
     const existingPlayer = await this.playerRepository.findOne({
       where: { roomId, name: joinRoomDto.name }
     });
 
     if (existingPlayer) {
-      // Atualizar o socketId se for o mesmo jogador
       if (socketId) {
         existingPlayer.socketId = socketId;
         const updatedPlayer = await this.playerRepository.save(existingPlayer);
@@ -79,7 +77,7 @@ export class RoomService {
     }
 
     const player = this.playerRepository.create({
-      id: joinRoomDto.playerId || uuidv4(), // Usar playerId específico se fornecido
+      id: joinRoomDto.playerId || uuidv4(),
       name: joinRoomDto.name,
       avatar: joinRoomDto.avatar,
       roomId,
@@ -124,7 +122,6 @@ export class RoomService {
       throw new BadRequestException('Sala não está em votação');
     }
 
-    // Verificar se o jogador já votou
     const existingVote = await this.voteRepository.findOne({
       where: { roomId, playerId },
     });
@@ -179,7 +176,6 @@ export class RoomService {
       throw new BadRequestException('Apenas o dono da sala pode reiniciar a votação');
     }
 
-    // Limpar votos
     await this.voteRepository.delete({ roomId });
     
     room.status = RoomStatus.WAITING;

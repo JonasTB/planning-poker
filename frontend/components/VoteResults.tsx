@@ -17,14 +17,13 @@ export default function VoteResults({ votes }: VoteResultsProps) {
     const min = Math.min(...values);
     const max = Math.max(...values);
     
-    // Encontrar o valor mais frequente (moda)
     const frequency: { [key: number]: number } = {};
     values.forEach(value => {
       frequency[value] = (frequency[value] || 0) + 1;
     });
     
-    const mode = Object.entries(frequency).reduce((a, b) => 
-      frequency[a[0]] > frequency[b[0]] ? a : b
+    const mode = Object.entries(frequency).reduce((a: [string, number], b: [string, number]) => 
+      frequency[parseInt(a[0])] > frequency[parseInt(b[0])] ? a : b
     )[0];
 
     return { average, min, max, mode: parseInt(mode) };
@@ -50,7 +49,6 @@ export default function VoteResults({ votes }: VoteResultsProps) {
         📊 Resultados da Votação
       </h3>
 
-      {/* Estatísticas */}
       <div className="grid md:grid-cols-4 gap-4 mb-8">
         <div className="text-center p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="text-2xl font-bold text-blue-600">{stats.average.toFixed(1)}</div>
@@ -70,7 +68,6 @@ export default function VoteResults({ votes }: VoteResultsProps) {
         </div>
       </div>
 
-      {/* Votos individuais */}
       <div className="space-y-4">
         <h4 className="text-lg font-semibold text-gray-900 mb-4">
           Votos dos Participantes:
@@ -99,7 +96,6 @@ export default function VoteResults({ votes }: VoteResultsProps) {
         </div>
       </div>
 
-      {/* Recomendação */}
       <div className="mt-8 p-4 bg-purple-50 border border-purple-200 rounded-lg">
         <h4 className="font-semibold text-purple-900 mb-2">
           💡 Recomendação:

@@ -47,13 +47,10 @@ export class PlanningPokerGateway implements OnGatewayConnection, OnGatewayDisco
         client.id,
       );
 
-      // Juntar o cliente à sala
       client.join(data.roomId);
 
-      // Buscar informações atualizadas da sala
       const room = await this.roomService.getRoom(data.roomId);
 
-      // Notificar todos na sala sobre o novo jogador
       this.server.to(data.roomId).emit('playerJoined', {
         player: {
           id: player.id,
@@ -70,7 +67,6 @@ export class PlanningPokerGateway implements OnGatewayConnection, OnGatewayDisco
         },
       });
 
-      // Enviar confirmação para o jogador
       client.emit('joinedRoom', {
         success: true,
         player,
@@ -105,10 +101,8 @@ export class PlanningPokerGateway implements OnGatewayConnection, OnGatewayDisco
       
       const room = await this.roomService.startVoting(data.roomId, data.ownerId);
 
-      // Buscar informações atualizadas da sala
       const updatedRoom = await this.roomService.getRoom(data.roomId);
 
-      // Notificar todos na sala sobre o início da votação
       this.server.to(data.roomId).emit('votingStarted', {
         roomId: updatedRoom.id,
         status: updatedRoom.status,
@@ -140,7 +134,6 @@ export class PlanningPokerGateway implements OnGatewayConnection, OnGatewayDisco
         data.vote.value,
       );
 
-      // Confirmar voto para o jogador
       client.emit('voteSubmitted', {
         success: true,
         message: 'Voto registrado com sucesso',
@@ -150,7 +143,6 @@ export class PlanningPokerGateway implements OnGatewayConnection, OnGatewayDisco
         },
       });
 
-      // Notificar outros jogadores sobre o voto (sem revelar o valor)
       client.to(data.roomId).emit('playerVoted', {
         playerId: data.playerId,
         message: 'Um jogador votou',
@@ -177,7 +169,6 @@ export class PlanningPokerGateway implements OnGatewayConnection, OnGatewayDisco
       const room = await this.roomService.revealVotes(data.roomId, data.ownerId);
       const votes = await this.roomService.getRoomVotes(data.roomId);
 
-      // Notificar todos na sala sobre os votos revelados
       this.server.to(data.roomId).emit('votesRevealed', {
         roomId: room.id,
         status: room.status,
@@ -209,7 +200,6 @@ export class PlanningPokerGateway implements OnGatewayConnection, OnGatewayDisco
       
       const room = await this.roomService.resetVoting(data.roomId, data.ownerId);
 
-      // Notificar todos na sala sobre o reinício da votação
       this.server.to(data.roomId).emit('votingReset', {
         roomId: room.id,
         status: room.status,
@@ -234,16 +224,12 @@ export class PlanningPokerGateway implements OnGatewayConnection, OnGatewayDisco
     this.logger.log(`Jogador ${data.playerId} saindo da sala: ${data.roomId}`);
     
     try {
-      // Remover jogador da sala no banco
       await this.roomService.removePlayerFromRoom(data.playerId);
       
-      // Sair da sala do WebSocket
       client.leave(data.roomId);
       
-      // Buscar informações atualizadas da sala
       const room = await this.roomService.getRoom(data.roomId);
       
-      // Notificar outros jogadores sobre a saída
       client.to(data.roomId).emit('playerLeft', {
         playerId: data.playerId,
         room: {

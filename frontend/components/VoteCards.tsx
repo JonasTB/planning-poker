@@ -52,7 +52,6 @@ export default function VoteCards({ onVote, hasVoted }: VoteCardsProps) {
               </div>
             </div>
             
-            {/* Hover effect */}
             <div className="absolute inset-0 bg-blue-200 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-200" />
           </button>
         ))}

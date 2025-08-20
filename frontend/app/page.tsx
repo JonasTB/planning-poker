@@ -11,7 +11,6 @@ export default function HomePage() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        {/* Tabs */}
         <div className="flex border-b border-gray-200">
           <button
             type="button"
@@ -37,7 +36,6 @@ export default function HomePage() {
           </button>
         </div>
 
-        {/* Tab Content */}
         <div className="p-6">
           {activeTab === 'create' ? (
             <RoomForm />
@@ -47,7 +45,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Features */}
       <div className="mt-12 grid md:grid-cols-3 gap-6">
         <div className="text-center">
           <div className="text-4xl mb-4">🎯</div>

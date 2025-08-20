@@ -20,9 +20,8 @@ export default function RoomForm() {
     setIsLoading(true);
 
     try {
-      const playerId = uuidv4(); // Um único ID para ser dono e jogador
+      const playerId = uuidv4();
 
-      // Criar sala
       const roomResponse = await fetch('/api/rooms', {
         method: 'POST',
         headers: {
@@ -30,7 +29,7 @@ export default function RoomForm() {
         },
         body: JSON.stringify({
           name: formData.roomName,
-          ownerId: playerId, // Usar o mesmo ID como dono e jogador
+          ownerId: playerId,
           maxPlayers: formData.maxPlayers,
         }),
       });
@@ -41,7 +40,6 @@ export default function RoomForm() {
 
       const room = await roomResponse.json();
 
-      // Adicionar jogador à sala (com ID específico para ser o dono)
       const playerResponse = await fetch(`/api/rooms/${room.id}/players`, {
         method: 'POST',
         headers: {
@@ -49,7 +47,7 @@ export default function RoomForm() {
         },
         body: JSON.stringify({
           name: formData.playerName,
-          playerId: playerId, // Usar o mesmo ID
+          playerId: playerId,
         }),
       });
 

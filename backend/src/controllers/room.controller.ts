@@ -129,7 +129,6 @@ export class RoomController {
     @Body() joinRoomDto: JoinRoomDto,
   ) {
     this.logger.log(`Jogador ${joinRoomDto.name} tentando entrar na sala: ${roomId}`);
-    // Note: socketId será gerenciado pelo WebSocket quando o jogador conectar
     return await this.roomService.joinRoom(roomId, joinRoomDto);
   }
 

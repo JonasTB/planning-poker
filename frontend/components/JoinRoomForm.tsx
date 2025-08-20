@@ -18,7 +18,6 @@ export default function JoinRoomForm() {
     setError('');
 
     try {
-      // Verificar se a sala existe
       const roomResponse = await fetch(`/api/rooms/${formData.roomId}`);
       
       if (!roomResponse.ok) {
@@ -27,7 +26,6 @@ export default function JoinRoomForm() {
 
       const room = await roomResponse.json();
 
-      // Adicionar jogador à sala
       const playerResponse = await fetch(`/api/rooms/${formData.roomId}/players`, {
         method: 'POST',
         headers: {
@@ -45,14 +43,11 @@ export default function JoinRoomForm() {
 
       const player = await playerResponse.json();
 
-      // Verificar se o jogador já está na sala
-      const existingPlayer = room.players.find(p => p.name === formData.playerName);
+      const existingPlayer = room.players.find((p: { id: string; name: string }) => p.name === formData.playerName);
       
       if (existingPlayer) {
-        // Se já existe, usar o ID existente
         router.push(`/room/${formData.roomId}?playerId=${existingPlayer.id}&playerName=${encodeURIComponent(formData.playerName)}`);
       } else {
-        // Se é novo, usar o ID retornado
         router.push(`/room/${formData.roomId}?playerId=${player.id}&playerName=${encodeURIComponent(formData.playerName)}`);
       }
     } catch (error) {

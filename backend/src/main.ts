@@ -6,7 +6,6 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Configuração do Swagger
   const config = new DocumentBuilder()
     .setTitle('Planning Poker API')
     .setDescription('API para sistema de votação de tarefas Planning Poker')
@@ -17,14 +16,12 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  // Configuração de validação global
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
     transform: true,
   }));
 
-  // Configuração de CORS
   app.enableCors({
     origin: true,
     credentials: true,
