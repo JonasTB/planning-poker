@@ -1,5 +1,7 @@
 # 🃏 Planning Poker - Sistema de Votação de Tarefas
 
+![Preview do Frontend](https://i.imgur.com/pPmkfND.png)
+
 Um sistema completo de Planning Poker para equipes ágeis, desenvolvido com NestJS (backend) e Next.js (frontend), incluindo comunicação em tempo real via WebSockets.
 
 ## ✨ Funcionalidades
